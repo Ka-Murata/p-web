@@ -704,7 +704,7 @@ function LogFormPage({
           onChange={updateRotationMemo}
         />
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid gap-3 sm:grid-cols-2">
           <Field label="開始時刻" icon={CalendarDays} htmlFor="start-time">
             <Input
               id="start-time"
