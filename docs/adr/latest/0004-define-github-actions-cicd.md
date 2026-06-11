@@ -6,7 +6,7 @@ Proposed
 
 ## Context
 
-このアプリは `Vite + React + TypeScript` のローカルファースト SPA で、MVP の初期公開先は GitHub Pages とする。ADR 0003 で、`main` ブランチに入った変更を GitHub Actions でテスト・ビルドし、成功した成果物だけを GitHub Pages に公開する方針を決めた。
+このアプリは `Vite + React + TypeScript` のローカルファースト SPA で、MVP の初期公開先は GitHub Pages とする。ADR 0003 で、`master` ブランチに入った変更を GitHub Actions でテスト・ビルドし、成功した成果物だけを GitHub Pages に公開する方針を決めた。
 
 公開前に、型チェック込みのビルド、テスト、依存関係の脆弱性、秘密情報や `.env` など公開してはいけない内容の混入を確認したい。将来的には AWS 移行も視野に入れるが、MVP では GitHub Pages 向けに軽量で分かりやすい CI/CD を優先する。
 
@@ -16,7 +16,7 @@ Proposed
 
 ### 1. GitHub Actions で quality と deploy を 1 workflow にまとめる
 
-- **メリット**: PR 時の検証と `main` push 時のデプロイを同じファイルで管理できる。MVP として見通しがよい。
+- **メリット**: PR 時の検証と `master` push 時のデプロイを同じファイルで管理できる。MVP として見通しがよい。
 - **デメリット**: 将来 AWS やプレビュー環境が増えると workflow が大きくなる。
 
 ### 2. CI と CD を別 workflow に分ける
@@ -42,7 +42,7 @@ PR では `quality` のみ実行する。`quality` では以下を行う。
 - `npm test` を実行する。
 - `npm run build` を実行する。
 
-`main` ブランチへの push では、`quality` 成功後に `deploy` を実行し、GitHub Pages へ公開する。デプロイには公式 Pages Actions の `actions/configure-pages`、`actions/upload-pages-artifact`、`actions/deploy-pages` を使う。`gh-pages` ブランチへ成果物をコミットする方式は採用しない。
+`master` ブランチへの push では、`quality` 成功後に `deploy` を実行し、GitHub Pages へ公開する。デプロイには公式 Pages Actions の `actions/configure-pages`、`actions/upload-pages-artifact`、`actions/deploy-pages` を使う。`gh-pages` ブランチへ成果物をコミットする方式は採用しない。
 
 `npm audit` は `high` 以上で失敗とし、`moderate` 以下は MVP では許容する。
 
@@ -52,7 +52,7 @@ PR では `quality` のみ実行する。`quality` では以下を行う。
 
 ## Consequences
 
-PR 時にテスト、型チェック込みビルド、依存関係の重大脆弱性、秘密情報混入を確認できる。`main` に入った変更だけが GitHub Pages へ自動公開されるため、公開作業の手間とミスを減らせる。
+PR 時にテスト、型チェック込みビルド、依存関係の重大脆弱性、秘密情報混入を確認できる。`master` に入った変更だけが GitHub Pages へ自動公開されるため、公開作業の手間とミスを減らせる。
 
 一方で、軽量な自作秘密情報チェックは専用ツールほど網羅的ではない。誤検知や検知漏れが出た場合はルール調整または専用ツール導入が必要になる。
 

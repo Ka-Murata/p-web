@@ -45,7 +45,7 @@
 ## GitHub Pages 公開後確認
 
 1. GitHub のリポジトリ設定で Pages の source が GitHub Actions になっていることを確認する。
-2. `main` ブランチへの push 後、GitHub Actions の `Pages CI/CD` workflow で `quality` と `deploy` が成功していることを確認する。
+2. `master` ブランチへの push 後、GitHub Actions の `Pages CI/CD` workflow で `quality` と `deploy` が成功していることを確認する。
 3. `quality` job で `npm ci`、`npm run check:public-safety`、`npm audit --audit-level=high`、`npm test`、`npm run build` が成功していることを確認する。
 4. workflow の結果に表示された公開 URL を開き、アプリが表示されることを確認する。
 5. 公開 URL の `/logs`、`/analytics`、`/machines` をタブ操作で開けることを確認する。
