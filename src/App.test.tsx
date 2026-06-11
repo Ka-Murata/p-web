@@ -18,6 +18,14 @@ afterEach(async () => {
 });
 
 describe('log form', () => {
+  it('shows local storage and release quality gate guidance on the logs page', async () => {
+    renderApp('/logs');
+
+    expect(await screen.findByText('端末内保存')).toBeInTheDocument();
+    expect(screen.getByText('GitHub Pages 公開中')).toBeInTheDocument();
+    expect(screen.getByText(/test \/ build \/ audit \/ secrets/)).toBeInTheDocument();
+  });
+
   it('shows validation errors for missing required fields', async () => {
     const user = userEvent.setup();
     renderApp('/logs/new');

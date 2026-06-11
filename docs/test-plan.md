@@ -42,6 +42,25 @@
 3. 長いホール名、長い機種名、マイナス収支でも文字やボタンが重ならないことを確認する。
 4. 下部タブと保存ボタンがタップしやすく、フォーム入力を隠し続けないことを確認する。
 
+## GitHub Pages 公開後確認
+
+1. GitHub のリポジトリ設定で Pages の source が GitHub Actions になっていることを確認する。
+2. `main` ブランチへの push 後、GitHub Actions の `Pages CI/CD` workflow で `quality` と `deploy` が成功していることを確認する。
+3. `quality` job で `npm ci`、`npm run check:public-safety`、`npm audit --audit-level=high`、`npm test`、`npm run build` が成功していることを確認する。
+4. workflow の結果に表示された公開 URL を開き、アプリが表示されることを確認する。
+5. 公開 URL の `/logs`、`/analytics`、`/machines` をタブ操作で開けることを確認する。
+6. `/logs` で `端末内保存` バッジと、公開前に `test / build / audit / secrets` を確認する案内が表示されることを確認する。
+7. 実戦ログを追加し、同じ端末・同じブラウザでリロードしてもデータが残ることを確認する。
+8. 別ブラウザまたは別端末で公開 URL を開き、自分の実戦ログが表示されないことを確認する。
+9. GitHub Pages 単体では指定ユーザー制限をしないため、URL を知っている第三者はアプリ自体を開けることを前提として確認する。
+
+## GitHub Pages CI/CD 失敗確認
+
+1. `.env.example` はコミット対象に含めても `npm run check:public-safety` が成功することを確認する。
+2. `.env`、秘密鍵ファイル、`AWS_SECRET_ACCESS_KEY=`、`GITHUB_TOKEN=`、`PASSWORD=`、`TOKEN=` などを含めると `npm run check:public-safety` が失敗することをローカルで確認する。確認後は該当ファイルや文字列を残さない。
+3. `npm audit --audit-level=high` が high/critical の脆弱性を検出した場合、`quality` job が失敗し、`deploy` が実行されないことを確認する。
+4. `npm test` または `npm run build` が失敗した場合、`deploy` が実行されないことを確認する。
+
 ## 既知の未対応事項
 
 - クラウド同期、ログイン、CSV 入出力は MVP 後。

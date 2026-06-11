@@ -2,6 +2,7 @@ import { Suspense, lazy, useMemo, useState, type FormEvent, type ReactNode } fro
 import {
   BarChart3,
   CalendarDays,
+  CheckCircle2,
   CircleDollarSign,
   Cpu,
   ListChecks,
@@ -173,15 +174,34 @@ function LogsPage() {
               {formatCurrency(summary.totalProfit)}
             </h2>
           </div>
-          <span className="rounded-[8px] bg-pwt-accent-soft px-3 py-2 text-sm font-bold text-pwt-primary">
-            {summary.playCount}戦
-          </span>
+          <div className="flex shrink-0 flex-col items-end gap-2">
+            <span className="rounded-[8px] bg-pwt-accent-soft px-3 py-2 text-sm font-bold text-pwt-primary">
+              {summary.playCount}戦
+            </span>
+            <span className="rounded-[8px] bg-pwt-primary-soft px-3 py-1.5 text-xs font-extrabold text-pwt-primary">
+              端末内保存
+            </span>
+          </div>
         </div>
         <div className="mt-4 grid grid-cols-2 gap-3 text-sm leading-6 text-pwt-muted">
           <SummaryValue label="投資" value={formatCurrency(summary.totalInvestment)} />
           <SummaryValue label="回収" value={formatCurrency(summary.totalPayout)} />
           <SummaryValue label="勝率" value={`${Math.round(summary.winRate * 100)}%`} />
           <SummaryValue label="平均" value={formatCurrency(summary.averageProfit)} />
+        </div>
+      </section>
+
+      <section className="rounded-[8px] border border-amber-200 bg-amber-50 p-4 text-amber-950" aria-labelledby="publish-safety-title">
+        <div className="flex items-start gap-3">
+          <CheckCircle2 aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-pwt-primary" />
+          <div className="min-w-0">
+            <h2 id="publish-safety-title" className="text-sm font-extrabold tracking-normal">
+              GitHub Pages 公開中
+            </h2>
+            <p className="mt-1 text-sm font-bold leading-6">
+              実戦ログはこの端末のブラウザにだけ保存されます。公開前に test / build / audit / secrets を確認します。
+            </p>
+          </div>
         </div>
       </section>
 
