@@ -18,11 +18,11 @@
 ## 2026-06-11 - iPhone 16 で開始時刻/終了時刻入力のレイアウトが崩れる
 
 - 種別: 不具合 / モバイル表示
-- 症状: iPhone 16 で実戦ログフォームを開くと、開始時刻と終了時刻の入力欄レイアウトが崩れる。
-- 原因: 開始時刻/終了時刻の `type="time"` 入力をモバイル幅でも `grid-cols-2` の 2 カラムにしていた。iOS Safari の時刻入力はネイティブUIの最小幅が広く、狭いカラム内で崩れる可能性が高い。
-- 対応: 開始時刻/終了時刻のコンテナを `grid gap-3 sm:grid-cols-2` に変更し、モバイル幅では縦積み、`sm` 以上では 2 カラムにした。
-- 確認: `npm test` 成功、`npm run build` 成功。実機表示は未確認のため、iPhone 16 Safari で `/logs/new` と編集画面の開始時刻/終了時刻を確認する。
-- 関連: `src/App.tsx`
+- 症状: iPhone 16 で実戦ログフォームを開くと、開始時刻と終了時刻の入力欄が背景ブロックからはみ出してレイアウトが崩れる。前回の縦積み対応後も解消しなかった。
+- 原因: 開始時刻/終了時刻の `type="time"` 入力を当初モバイル幅でも `grid-cols-2` の 2 カラムにしていたことに加え、共通 `Input` と `Field` に `min-width: 0` / `max-width: 100%` 相当の制約がなく、iOS Safari のネイティブ時刻入力の最小幅が親幅を超える可能性があった。
+- 対応: 開始時刻/終了時刻のコンテナは `grid gap-3 sm:grid-cols-2` のまま維持し、共通 `Input` を `block min-w-0 w-full max-w-full` に変更した。`Field` のラッパーにも `min-w-0` を追加した。さらに `type="time"` 入力へ `appearance-none overflow-hidden text-left` を付け、WebKit 向けに `input[type="time"]` と `::-webkit-date-and-time-value` の幅制約を追加した。
+- 確認: `npm test` 成功、`npm run build` 成功、`npm run check:public-safety` 成功。実機表示は未確認のため、iPhone 16 Safari で `/logs/new` と編集画面の開始時刻/終了時刻が背景ブロック内に収まることを確認する。
+- 関連: `src/App.tsx`, `src/App.css`, `src/components/ui/input.tsx`
 
 ## 2026-06-11 - master push で Pages CI/CD が起動しない
 

@@ -710,6 +710,7 @@ function LogFormPage({
               id="start-time"
               name="startTime"
               type="time"
+              className="appearance-none overflow-hidden text-left"
               value={formState.startTime}
               onChange={(event) => updateField('startTime', event.target.value)}
             />
@@ -719,6 +720,7 @@ function LogFormPage({
               id="end-time"
               name="endTime"
               type="time"
+              className="appearance-none overflow-hidden text-left"
               value={formState.endTime}
               onChange={(event) => updateField('endTime', event.target.value)}
             />
@@ -783,7 +785,7 @@ function Field({
   children: ReactNode;
 }) {
   return (
-    <div className="space-y-2">
+    <div className="min-w-0 space-y-2">
       <label htmlFor={htmlFor} className="flex items-center gap-1.5 text-sm font-bold text-pwt-muted">
         <Icon aria-hidden="true" className="size-4" />
         {label}

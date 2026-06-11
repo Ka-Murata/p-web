@@ -47,3 +47,19 @@
     min-height: 100vh;
   }
 }
+
+@layer base {
+  input[type="time"] {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  input[type="time"]::-webkit-date-and-time-value {
+    min-width: 0;
+    text-align: left;
+  }
+
+  input[type="time"]::-webkit-calendar-picker-indicator {
+    margin-left: 0;
+  }
+}
