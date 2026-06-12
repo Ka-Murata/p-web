@@ -49,7 +49,7 @@
 3. `quality` job で `npm ci`、`npm run check:public-safety`、`npm audit --audit-level=high`、`npm test`、`npm run build` が成功していることを確認する。
 4. workflow の結果に表示された公開 URL を開き、アプリが表示されることを確認する。
 5. 公開 URL の `/logs`、`/analytics`、`/machines` をタブ操作で開けることを確認する。
-6. `/logs` で `端末内保存` バッジと、公開前に `test / build / audit / secrets` を確認する案内が表示されることを確認する。
+6. `/logs` で `端末内保存` バッジと端末内保存の案内が表示されることを確認する。
 7. 実戦ログを追加し、同じ端末・同じブラウザでリロードしてもデータが残ることを確認する。
 8. 別ブラウザまたは別端末で公開 URL を開き、自分の実戦ログが表示されないことを確認する。
 9. GitHub Pages 単体では指定ユーザー制限をしないため、URL を知っている第三者はアプリ自体を開けることを前提として確認する。

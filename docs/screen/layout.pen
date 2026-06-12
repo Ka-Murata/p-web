@@ -458,7 +458,7 @@
               "fill": "#76521cff",
               "textGrowth": "fixed-width",
               "width": 318,
-              "content": "GitHub Pages で公開中でも、実戦ログはこの端末のブラウザにだけ保存されます。公開前に test / build / audit / secrets を確認します。",
+              "content": "GitHub Pages で公開中でも、実戦ログはこの端末のブラウザにだけ保存されます。",
               "fontFamily": "Inter",
               "fontSize": 12,
               "fontWeight": "700"
@@ -486,11 +486,11 @@
               "x": 24,
               "y": 54,
               "name": "閉じる",
-              "fill": "#5d6b66ff",
-              "content": "閉じる",
+              "fill": "#0f5c4fff",
+              "content": "← 戻る",
               "fontFamily": "Inter",
               "fontSize": 14,
-              "fontWeight": "600"
+              "fontWeight": "800"
             },
             {
               "type": "text",
@@ -511,7 +511,7 @@
               "y": 120,
               "name": "必須項目だけで保存できます",
               "fill": "#687873ff",
-              "content": "必須項目だけで保存できます",
+              "content": "必須項目だけで保存できます。戻ると一覧へ戻ります。",
               "fontFamily": "Inter",
               "fontSize": 13,
               "fontWeight": "500"
@@ -1715,7 +1715,7 @@
           "fill": "#5d6b66ff",
           "textGrowth": "fixed-width",
           "width": 390,
-          "content": "ログ: 最初の画面。GitHub Pages 公開後も個人データが端末内保存であること、公開前にCI品質ゲートを通すことを上部で明示する。",
+          "content": "ログ: 最初の画面。GitHub Pages 公開後も個人データが端末内保存であることを上部で明示する。",
           "fontFamily": "Inter",
           "fontSize": 13,
           "fontWeight": "600"
@@ -1729,7 +1729,7 @@
           "fill": "#5d6b66ff",
           "textGrowth": "fixed-width",
           "width": 390,
-          "content": "追加: 必須項目を上に集約し、利益を即時プレビュー。投資額ごとの回転数メモは任意入力として利益計算と分離する。",
+          "content": "追加/編集フォーム: 下部タブを隠す代わりに、上部の戻るボタンで常にログ一覧へ戻る。未保存確認はMVPでは行わない。",
           "fontFamily": "Inter",
           "fontSize": 13,
           "fontWeight": "600"

@@ -15,6 +15,15 @@
 - 関連: ...
 ```
 
+## 2026-06-11 - iPhone 16 で日付入力のレイアウトが崩れる
+
+- 種別: 不具合 / モバイル表示
+- 症状: 実戦追加画面の日付入力が、開始時刻・終了時刻と同様に背景ブロック内へ収まらずレイアウトが崩れる。
+- 原因: 前回の iOS Safari 向けネイティブ入力幅制約を type="time" のみに適用しており、同じ WebKit ネイティブ UI を持つ type="date" が対象から漏れていた。日付入力にも appearance-none overflow-hidden text-left が付いていなかった。
+- 対応: 日付入力へ時刻入力と同じ appearance-none overflow-hidden text-left を追加し、WebKit 向け CSS の min-width、max-width、内部値表示、カレンダーアイコン余白の制約対象を input[type="date"] と input[type="time"] の両方に広げた。日付・開始時刻・終了時刻の制約クラスを確認する回帰テストを追加した。
+- 確認: npm test 成功、npm run build 成功。実機表示は未確認のため、iPhone 16 Safari で /logs/new と編集画面の日付入力が背景ブロック内に収まることを確認する。
+- 関連: src/App.tsx, src/App.css, src/App.test.tsx, docs/fix-log.md
+
 ## 2026-06-11 - iPhone 16 で開始時刻/終了時刻入力のレイアウトが崩れる
 
 - 種別: 不具合 / モバイル表示

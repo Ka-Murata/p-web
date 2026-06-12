@@ -3,6 +3,7 @@ import {
   BarChart3,
   CalendarDays,
   CheckCircle2,
+  ChevronLeft,
   CircleDollarSign,
   Cpu,
   ListChecks,
@@ -199,7 +200,7 @@ function LogsPage() {
               GitHub Pages 公開中
             </h2>
             <p className="mt-1 text-sm font-bold leading-6">
-              実戦ログはこの端末のブラウザにだけ保存されます。公開前に test / build / audit / secrets を確認します。
+              実戦ログはこの端末のブラウザにだけ保存されます。
             </p>
           </div>
         </div>
@@ -635,7 +636,13 @@ function LogFormPage({
   return (
     <main aria-labelledby="log-form-title" className="space-y-4 pb-3">
       <section className="rounded-[8px] bg-pwt-surface p-5 shadow-pwt-card">
-        <p className="text-sm font-bold text-pwt-muted">Play Log</p>
+        <Button asChild variant="ghost" size="sm" className="-ml-2 text-pwt-primary">
+          <NavLink to="/logs" aria-label="ログ一覧へ戻る">
+            <ChevronLeft aria-hidden="true" />
+            戻る
+          </NavLink>
+        </Button>
+        <p className="mt-3 text-sm font-bold text-pwt-muted">Play Log</p>
         <h2 id="log-form-title" className="mt-2 text-3xl font-extrabold tracking-normal text-pwt-primary">
           {title}
         </h2>
@@ -644,7 +651,14 @@ function LogFormPage({
 
       <form className="space-y-4 rounded-[8px] bg-pwt-surface p-4 shadow-pwt-card" onSubmit={handleSubmit} noValidate>
         <Field label="日付" icon={CalendarDays} htmlFor="date" error={errors.date}>
-          <Input id="date" name="date" type="date" value={formState.date} onChange={(event) => updateField('date', event.target.value)} />
+          <Input
+            id="date"
+            name="date"
+            type="date"
+            className="appearance-none overflow-hidden text-left"
+            value={formState.date}
+            onChange={(event) => updateField('date', event.target.value)}
+          />
         </Field>
         <Field label="ホール名" icon={MapPin} htmlFor="hall-name" error={errors.hallName}>
           <Input

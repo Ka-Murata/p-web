@@ -49,16 +49,19 @@
 }
 
 @layer base {
+  input[type="date"],
   input[type="time"] {
     min-width: 0;
     max-width: 100%;
   }
 
+  input[type="date"]::-webkit-date-and-time-value,
   input[type="time"]::-webkit-date-and-time-value {
     min-width: 0;
     text-align: left;
   }
 
+  input[type="date"]::-webkit-calendar-picker-indicator,
   input[type="time"]::-webkit-calendar-picker-indicator {
     margin-left: 0;
   }
