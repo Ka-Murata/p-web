@@ -70,5 +70,26 @@ describe('machineRepository', () => {
     expect(machines.map((machine) => machine.id).sort()).toEqual(
       seedMachines.map((machine) => machine.id).sort(),
     );
+    expect(machines.find((machine) => machine.id === 'machine-umi-series')?.dmmUrl).toBe(
+      'https://p-town.dmm.com/machines/5001',
+    );
+  });
+
+  it('keeps machines without DMM URLs readable', async () => {
+    const repository = createMachineRepository(database);
+
+    await repository.upsertMany([
+      {
+        id: 'machine-without-dmm',
+        name: 'URLなし機種',
+        maker: 'PWT Seed',
+        category: 'pachinko',
+      },
+    ]);
+
+    await expect(repository.getById('machine-without-dmm')).resolves.toMatchObject({
+      id: 'machine-without-dmm',
+      name: 'URLなし機種',
+    });
   });
 });

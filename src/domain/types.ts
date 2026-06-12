@@ -32,6 +32,7 @@ export type Machine = {
   name: string;
   maker: string;
   category: MachineCategory;
+  dmmUrl?: string;
   memo?: string;
 };
 

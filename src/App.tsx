@@ -6,6 +6,7 @@ import {
   ChevronLeft,
   CircleDollarSign,
   Cpu,
+  ExternalLink,
   ListChecks,
   MapPin,
   Pencil,
@@ -429,6 +430,14 @@ function MachinePreview({ machine }: { machine: Machine | undefined }) {
         <DetailPill label="カテゴリ" value={getMachineCategoryLabel(machine.category)} />
       </div>
       {machine.memo ? <p className="mt-4 break-words text-sm leading-6 text-white/80">{machine.memo}</p> : null}
+      {machine.dmmUrl ? (
+        <Button asChild variant="accent" size="sm" className="mt-4 w-full text-pwt-primary sm:w-auto">
+          <a href={machine.dmmUrl} target="_blank" rel="noreferrer">
+            <ExternalLink aria-hidden="true" />
+            DMMで詳細を見る
+          </a>
+        </Button>
+      ) : null}
     </section>
   );
 }

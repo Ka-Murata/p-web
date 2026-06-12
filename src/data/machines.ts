@@ -13,6 +13,7 @@ export const seedMachines: Machine[] = [
     name: '海物語シリーズ',
     maker: 'SANYO',
     category: 'pachinko',
+    dmmUrl: 'https://p-town.dmm.com/machines/5001',
     memo: '定番シリーズ',
   },
   {

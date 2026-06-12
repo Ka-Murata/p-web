@@ -1508,9 +1508,9 @@
                   "id": "txt_96",
                   "x": 18,
                   "y": 120,
-                  "name": "将来: 演出・スペック・狙い目を表示",
+                  "name": "DMMで詳細を見る",
                   "fill": "#f2b84bff",
-                  "content": "将来: 演出・スペック・狙い目を表示",
+                  "content": "DMMで詳細を見る",
                   "fontFamily": "Inter",
                   "fontSize": 12,
                   "fontWeight": "800"
@@ -1757,7 +1757,7 @@
           "fill": "#5d6b66ff",
           "textGrowth": "fixed-width",
           "width": 390,
-          "content": "機種: seed データから選択する前提。将来の演出/スペック情報追加を見越して詳細プレビュー領域を確保。",
+          "content": "機種: DMMぱちタウン由来の最小seedを使い、詳細はDMM URLへ誘導する。ログ入力ではURLを出さない。",
           "fontFamily": "Inter",
           "fontSize": 13,
           "fontWeight": "600"

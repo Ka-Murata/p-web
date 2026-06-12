@@ -175,6 +175,28 @@ describe('log form', () => {
     expect(screen.getByDisplayValue('162')).toBeInTheDocument();
     expect(screen.getByDisplayValue('最初は良好')).toBeInTheDocument();
   });
+
+  it('shows a DMM detail link only in the selected machine preview', async () => {
+    const user = userEvent.setup();
+    renderApp('/machines');
+
+    await user.click(await screen.findByRole('button', { name: /海物語シリーズ/ }));
+
+    const dmmLink = screen.getByRole('link', { name: 'DMMで詳細を見る' });
+    expect(dmmLink).toHaveAttribute('href', 'https://p-town.dmm.com/machines/5001');
+    expect(dmmLink).toHaveAttribute('target', '_blank');
+
+    await user.click(screen.getByRole('button', { name: /スマートパチンコ A/ }));
+    expect(screen.queryByRole('link', { name: 'DMMで詳細を見る' })).not.toBeInTheDocument();
+  });
+
+  it('does not show DMM URLs in the log machine select', async () => {
+    renderApp('/logs/new');
+
+    const machineSelect = await screen.findByLabelText('機種');
+    expect(within(machineSelect).getByRole('option', { name: 'スマートパチンコ A' })).toBeInTheDocument();
+    expect(within(machineSelect).queryByText(/p-town\.dmm\.com/)).not.toBeInTheDocument();
+  });
 });
 
 function renderApp(initialPath: string) {
