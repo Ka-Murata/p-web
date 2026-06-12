@@ -17,6 +17,22 @@ export const seedMachines: Machine[] = [
     memo: '定番シリーズ',
   },
   {
+    id: 'dmm-pachinko-4982',
+    name: 'eリコリス・リコイル',
+    maker: 'ニューギン',
+    category: 'pachinko',
+    dmmUrl: 'https://p-town.dmm.com/machines/4982',
+    memo: 'DMMぱちタウン参照',
+  },
+  {
+    id: 'dmm-pachinko-4782',
+    name: 'e 東京喰種',
+    maker: 'ビスティ',
+    category: 'pachinko',
+    dmmUrl: 'https://p-town.dmm.com/machines/4782',
+    memo: 'DMMぱちタウン参照',
+  },
+  {
     id: 'machine-eva-series',
     name: 'エヴァンゲリオン系',
     maker: 'Bisty',

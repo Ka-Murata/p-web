@@ -73,6 +73,16 @@ describe('machineRepository', () => {
     expect(machines.find((machine) => machine.id === 'machine-umi-series')?.dmmUrl).toBe(
       'https://p-town.dmm.com/machines/5001',
     );
+    expect(machines.find((machine) => machine.id === 'dmm-pachinko-4982')).toMatchObject({
+      name: 'eリコリス・リコイル',
+      maker: 'ニューギン',
+      dmmUrl: 'https://p-town.dmm.com/machines/4982',
+    });
+    expect(machines.find((machine) => machine.id === 'dmm-pachinko-4782')).toMatchObject({
+      name: 'e 東京喰種',
+      maker: 'ビスティ',
+      dmmUrl: 'https://p-town.dmm.com/machines/4782',
+    });
   });
 
   it('keeps machines without DMM URLs readable', async () => {

@@ -186,6 +186,18 @@ describe('log form', () => {
     expect(dmmLink).toHaveAttribute('href', 'https://p-town.dmm.com/machines/5001');
     expect(dmmLink).toHaveAttribute('target', '_blank');
 
+    await user.click(screen.getByRole('button', { name: /eリコリス・リコイル/ }));
+    expect(screen.getByRole('link', { name: 'DMMで詳細を見る' })).toHaveAttribute(
+      'href',
+      'https://p-town.dmm.com/machines/4982',
+    );
+
+    await user.click(screen.getByRole('button', { name: /e 東京喰種/ }));
+    expect(screen.getByRole('link', { name: 'DMMで詳細を見る' })).toHaveAttribute(
+      'href',
+      'https://p-town.dmm.com/machines/4782',
+    );
+
     await user.click(screen.getByRole('button', { name: /スマートパチンコ A/ }));
     expect(screen.queryByRole('link', { name: 'DMMで詳細を見る' })).not.toBeInTheDocument();
   });
@@ -195,6 +207,8 @@ describe('log form', () => {
 
     const machineSelect = await screen.findByLabelText('機種');
     expect(within(machineSelect).getByRole('option', { name: 'スマートパチンコ A' })).toBeInTheDocument();
+    expect(await within(machineSelect).findByRole('option', { name: 'eリコリス・リコイル' })).toBeInTheDocument();
+    expect(within(machineSelect).getByRole('option', { name: 'e 東京喰種' })).toBeInTheDocument();
     expect(within(machineSelect).queryByText(/p-town\.dmm\.com/)).not.toBeInTheDocument();
   });
 });
