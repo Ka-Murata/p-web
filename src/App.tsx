@@ -895,7 +895,7 @@ function RotationAdjustmentFields({
         </p>
       </div>
       <div className="grid grid-cols-2 gap-3">
-        <Field label="貸玉レート" icon={CircleDollarSign} htmlFor="ball-rate-yen" error={errors.ballRateYen}>
+        <Field label="貸し玉単価" icon={CircleDollarSign} htmlFor="ball-rate-yen" error={errors.ballRateYen}>
           <Input
             id="ball-rate-yen"
             name="ballRateYen"

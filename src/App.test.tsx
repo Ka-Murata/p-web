@@ -106,7 +106,7 @@ describe('log form', () => {
     expect(screen.getByLabelText('平均回転プレビュー')).toHaveTextContent('--回/1k');
 
     await user.type(screen.getByLabelText('投資'), '28000');
-    await user.type(screen.getByLabelText('貸玉レート'), '4');
+    await user.type(screen.getByLabelText('貸し玉単価'), '4');
     await user.type(screen.getByLabelText('通常回転へ使った出玉'), '2500');
     await user.type(screen.getByLabelText('回転数'), '676');
 
@@ -148,7 +148,7 @@ describe('log form', () => {
     await user.type(screen.getByLabelText('台番号/台識別'), '328番台');
     await user.type(screen.getByLabelText('投資'), '10000');
     await user.type(screen.getByLabelText('回収'), '15500');
-    await user.type(screen.getByLabelText('貸玉レート'), '4');
+    await user.type(screen.getByLabelText('貸し玉単価'), '4');
     await user.type(screen.getByLabelText('通常回転へ使った出玉'), '2500');
     await user.type(screen.getByLabelText('投資額'), '10000');
     await user.type(screen.getByLabelText('回転数'), '162');
@@ -237,7 +237,7 @@ describe('log form', () => {
     expect(screen.getByText('補正投資')).toBeInTheDocument();
     expect(screen.getByText('￥38,000')).toBeInTheDocument();
     expect(screen.getByText('台別回転')).toBeInTheDocument();
-    expect(screen.getByText('1. スマートパチンコ A / 328番台')).toBeInTheDocument();
+    expect(screen.getByText((content) => content.includes('1. スマートパチンコ A / 328番台'))).toBeInTheDocument();
     expect(screen.getByText('マルハン新宿東宝 / 補正あり / 1戦')).toBeInTheDocument();
   });
 
