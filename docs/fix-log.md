@@ -13,7 +13,16 @@
 - 対応: ...
 - 確認: ...
 - 関連: ...
-```
+``` 
+
+## 2026-06-13 - npm audit で Vite 経由の esbuild high 脆弱性が検出される
+
+- 種別: CI/CD / セキュリティ
+- 症状: `npm audit --audit-level=high` が `vite` 経由の `esbuild` high 脆弱性 2 件で失敗した。
+- 原因: `vite@7.3.5` が audit 上で脆弱対象に含まれる `esbuild@0.27.7` に依存しており、npm audit が修正版として Vite 8 系への更新を要求していた。
+- 対応: `vite` を `^8.0.16`、Vite 8 を peer に持つ `@vitejs/plugin-react` を `^6.0.2`、Vite 8 対応済みの `@tailwindcss/vite` を `^4.3.1` へ更新し、`package-lock.json` を再生成した。
+- 確認: `npm audit --audit-level=high` 成功（found 0 vulnerabilities）、`npm run check:public-safety` 成功、`npm test` 成功（4 files / 26 tests）、`npm run build` 成功。
+- 関連: `package.json`, `package-lock.json`, `docs/fix-log.md`
 
 ## 2026-06-11 - iPhone 16 で日付入力のレイアウトが崩れる
 
