@@ -15,6 +15,11 @@ export class PachinkoWalletDb extends Dexie {
       playLogs: 'id, date, machineId, hallName, createdAt',
       machines: 'id, name, maker, category',
     });
+
+    this.version(2).stores({
+      playLogs: 'id, date, machineId, hallName, createdAt',
+      machines: 'id, name, maker, category',
+    });
   }
 }
 

@@ -27,11 +27,19 @@ describe('playLogRepository', () => {
       payout: 15000,
       memo: '初当たり軽め',
       tags: ['仕事帰り'],
+      machineUnitMemo: '328番台',
+      ballRateYen: 4,
+      reinvestedPayoutBalls: 2500,
       rotationMemos: [{ investment: 10000, spins: 162, note: '最初は良好' }],
     };
 
     const created = await repository.add(input);
     expect(created).toMatchObject(input);
+    expect(created).toMatchObject({
+      machineUnitMemo: '328番台',
+      ballRateYen: 4,
+      reinvestedPayoutBalls: 2500,
+    });
     expect(created.rotationMemos).toEqual([{ investment: 10000, spins: 162, note: '最初は良好' }]);
 
     await repository.add({
@@ -47,9 +55,15 @@ describe('playLogRepository', () => {
 
     const updated = await repository.update(created.id, {
       payout: 18000,
+      machineUnitMemo: undefined,
+      ballRateYen: undefined,
+      reinvestedPayoutBalls: undefined,
       rotationMemos: [{ investment: 20000, spins: 315 }],
     });
     expect(updated?.payout).toBe(18000);
+    expect(updated?.machineUnitMemo).toBeUndefined();
+    expect(updated?.ballRateYen).toBeUndefined();
+    expect(updated?.reinvestedPayoutBalls).toBeUndefined();
     expect(updated?.rotationMemos).toEqual([{ investment: 20000, spins: 315 }]);
     expect(updated?.updatedAt).toEqual(expect.any(String));
 

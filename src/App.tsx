@@ -24,13 +24,18 @@ import { Select } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import {
   calculateProfit,
+  calculateAdjustedInvestment,
+  calculateRotationRatePerThousandYen,
+  groupLogsByMachineUnit,
   getProfitRanking,
   groupLogsByHall,
   groupLogsByMachine,
   groupLogsByMonth,
+  summarizeRotationRate,
   summarizeCurrentMonth,
   summarizePlayLogs,
   type CreatePlayLogInput,
+  type MachineUnitRotationBucket,
   type Machine,
   type PlayLog,
   type RotationMemo,
@@ -56,8 +61,11 @@ type LogFormState = {
   date: string;
   hallName: string;
   machineId: string;
+  machineUnitMemo: string;
   investment: string;
   payout: string;
+  ballRateYen: string;
+  reinvestedPayoutBalls: string;
   startTime: string;
   endTime: string;
   exchangeRate: string;
@@ -69,6 +77,11 @@ type LogFormState = {
 type RotationMemoErrorKey = `rotationMemos.${number}.investment` | `rotationMemos.${number}.spins`;
 type LogFormErrorKey = keyof LogFormState | RotationMemoErrorKey;
 type LogFormErrors = Partial<Record<LogFormErrorKey, string>>;
+
+type RotationRatePreview = {
+  adjustedInvestment: number;
+  ratePerThousandYen: number | undefined;
+};
 
 const tabs: TabItem[] = [
   { path: '/logs', label: 'ログ', icon: ListChecks },
@@ -89,6 +102,10 @@ const currencyFormatter = new Intl.NumberFormat('ja-JP', {
 
 const numberFormatter = new Intl.NumberFormat('ja-JP', {
   maximumFractionDigits: 0,
+});
+
+const rotationRateFormatter = new Intl.NumberFormat('ja-JP', {
+  maximumFractionDigits: 1,
 });
 
 const MonthlyProfitChart = lazy(() =>
@@ -278,9 +295,11 @@ function AnalyticsPage() {
   const { data: machines = [], isError: isMachinesError } = useMachines();
   const machineNameById = useMemo(() => new Map(machines.map((machine) => [machine.id, machine.name])), [machines]);
   const summary = useMemo(() => summarizePlayLogs(playLogs), [playLogs]);
+  const rotationSummary = useMemo(() => summarizeRotationRate(playLogs), [playLogs]);
   const monthlyBuckets = useMemo(() => groupLogsByMonth(playLogs), [playLogs]);
   const hallBuckets = useMemo(() => groupLogsByHall(playLogs), [playLogs]);
   const machineBuckets = useMemo(() => groupLogsByMachine(playLogs, machineNameById), [playLogs, machineNameById]);
+  const machineUnitBuckets = useMemo(() => groupLogsByMachineUnit(playLogs, machineNameById), [playLogs, machineNameById]);
   const bestHalls = useMemo(() => getProfitRanking(hallBuckets, 'best', 3), [hallBuckets]);
   const worstHalls = useMemo(() => getProfitRanking(hallBuckets, 'worst', 3), [hallBuckets]);
   const bestMachines = useMemo(() => getProfitRanking(machineBuckets, 'best', 3), [machineBuckets]);
@@ -295,7 +314,7 @@ function AnalyticsPage() {
           分析
         </h2>
         <p className="mt-3 text-base leading-7 text-pwt-muted">
-          保存済みログから月別推移、ホール別、機種別の傾向を確認できます。
+          保存済みログから収支、台ごとの平均回転、機種別の傾向を確認できます。
         </p>
       </section>
 
@@ -307,6 +326,8 @@ function AnalyticsPage() {
         <MetricCard label="勝率" value={`${Math.round(summary.winRate * 100)}%`} />
         <MetricCard label="回収率" value={`${Math.round(recoveryRate * 100)}%`} />
         <MetricCard label="平均収支" value={formatCurrency(summary.averageProfit)} />
+        <MetricCard label="平均回転" value={formatRotationRate(rotationSummary.ratePerThousandYen)} />
+        <MetricCard label="補正投資" value={formatCurrency(rotationSummary.adjustedInvestment)} />
       </section>
 
       <section className="rounded-[8px] bg-pwt-surface p-4 shadow-pwt-card" aria-labelledby="monthly-chart-title">
@@ -332,6 +353,7 @@ function AnalyticsPage() {
         </h3>
         <RankingGroup title="ホール別" bestItems={bestHalls} worstItems={worstHalls} emptyText="ホール別ランキングはまだありません。" />
         <RankingGroup title="機種別" bestItems={bestMachines} worstItems={worstMachines} emptyText="機種別ランキングはまだありません。" />
+        <MachineUnitRotationGroup buckets={machineUnitBuckets.slice(0, 3)} />
       </section>
     </main>
   );
@@ -603,6 +625,7 @@ function LogFormPage({
   const investment = parseCurrencyInput(formState.investment);
   const payout = parseCurrencyInput(formState.payout);
   const profit = calculateProfit(investment, payout);
+  const rotationPreview = useMemo(() => createRotationRatePreview(formState), [formState]);
 
   const updateField = (field: keyof Omit<LogFormState, 'rotationMemos'>, value: string) => {
     setFormState((current) => ({ ...current, [field]: value }));
@@ -694,6 +717,15 @@ function LogFormPage({
             ))}
           </Select>
         </Field>
+        <Field label="台番号/台識別" icon={Cpu} htmlFor="machine-unit-memo">
+          <Input
+            id="machine-unit-memo"
+            name="machineUnitMemo"
+            placeholder="328番台"
+            value={formState.machineUnitMemo}
+            onChange={(event) => updateField('machineUnitMemo', event.target.value)}
+          />
+        </Field>
         <div className="grid grid-cols-2 gap-3">
           <Field label="投資" icon={CircleDollarSign} htmlFor="investment" error={errors.investment}>
             <Input
@@ -722,6 +754,8 @@ function LogFormPage({
         </div>
 
         <ProfitPreview profit={profit} />
+
+        <RotationAdjustmentFields formState={formState} errors={errors} preview={rotationPreview} onChange={updateField} />
 
         <RotationMemoFields
           rows={formState.rotationMemos}
@@ -835,6 +869,68 @@ function ProfitPreview({ profit }: { profit: number }) {
     <section className={`rounded-[8px] px-4 py-3 ${tone}`} aria-label="収支プレビュー">
       <p className="text-sm font-bold opacity-80">収支プレビュー</p>
       <p className="mt-1 text-2xl font-extrabold tracking-normal">{formatCurrency(profit)}</p>
+    </section>
+  );
+}
+
+function RotationAdjustmentFields({
+  formState,
+  errors,
+  preview,
+  onChange,
+}: {
+  formState: LogFormState;
+  errors: LogFormErrors;
+  preview: RotationRatePreview;
+  onChange: (field: keyof Omit<LogFormState, 'rotationMemos'>, value: string) => void;
+}) {
+  return (
+    <section className="space-y-3 rounded-[8px] border border-pwt-border bg-pwt-surface-muted p-3" aria-labelledby="rotation-adjustment-title">
+      <div className="min-w-0">
+        <h3 id="rotation-adjustment-title" className="text-sm font-extrabold tracking-normal text-pwt-text">
+          回転率補正
+        </h3>
+        <p className="mt-1 text-xs font-bold leading-5 text-pwt-muted">
+          通常回転へ使った持ち玉を投資相当に加算します。
+        </p>
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="貸玉レート" icon={CircleDollarSign} htmlFor="ball-rate-yen" error={errors.ballRateYen}>
+          <Input
+            id="ball-rate-yen"
+            name="ballRateYen"
+            type="number"
+            inputMode="decimal"
+            min="0"
+            step="0.01"
+            placeholder="4"
+            value={formState.ballRateYen}
+            onChange={(event) => onChange('ballRateYen', event.target.value)}
+          />
+        </Field>
+        <Field label="通常回転へ使った出玉" icon={CircleDollarSign} htmlFor="reinvested-payout-balls" error={errors.reinvestedPayoutBalls}>
+          <Input
+            id="reinvested-payout-balls"
+            name="reinvestedPayoutBalls"
+            type="number"
+            inputMode="numeric"
+            min="0"
+            step="1"
+            placeholder="2500"
+            value={formState.reinvestedPayoutBalls}
+            onChange={(event) => onChange('reinvestedPayoutBalls', event.target.value)}
+          />
+        </Field>
+      </div>
+      <section className="rounded-[8px] bg-pwt-primary-soft px-4 py-3 text-pwt-primary" aria-label="平均回転プレビュー">
+        <p className="text-sm font-bold opacity-80">平均回転プレビュー</p>
+        <div className="mt-1 flex flex-wrap items-end justify-between gap-2">
+          <p className="text-2xl font-extrabold tracking-normal">{formatRotationRate(preview.ratePerThousandYen)}</p>
+          <p className="text-xs font-extrabold text-pwt-muted">
+            補正投資 {formatCurrency(preview.adjustedInvestment)}
+          </p>
+        </div>
+      </section>
     </section>
   );
 }
@@ -998,6 +1094,38 @@ function RankingList({ title, items }: { title: string; items: SummaryBucket[] }
   );
 }
 
+function MachineUnitRotationGroup({ buckets }: { buckets: MachineUnitRotationBucket[] }) {
+  return (
+    <section className="rounded-[8px] bg-pwt-surface p-4 shadow-pwt-card" aria-label="台別回転">
+      <h4 className="text-base font-extrabold tracking-normal text-pwt-text">台別回転</h4>
+      {buckets.length > 0 ? (
+        <div className="mt-3 space-y-3">
+          {buckets.map((bucket, index) => (
+            <article key={bucket.key} className="flex items-start justify-between gap-3 rounded-[8px] bg-pwt-surface-muted p-3 text-sm">
+              <div className="min-w-0">
+                <p className="break-words font-extrabold text-pwt-text">
+                  {index + 1}. {bucket.label}
+                </p>
+                <p className="mt-1 text-xs font-bold leading-5 text-pwt-muted">
+                  {bucket.hallName} / {bucket.isAdjusted ? '補正あり' : '補正なし'} / {bucket.playCount}戦
+                </p>
+              </div>
+              <div className="shrink-0 text-right">
+                <p className="font-extrabold text-pwt-primary">{formatRotationRate(bucket.ratePerThousandYen)}</p>
+                <p className="mt-1 text-xs font-bold text-pwt-muted">通常時平均</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <div className="mt-3">
+          <StatusCard text="台別回転はまだありません。" />
+        </div>
+      )}
+    </section>
+  );
+}
+
 function MetricCard({ label, value }: { label: string; value: string }) {
   return (
     <article className="rounded-[8px] bg-pwt-surface p-4 shadow-pwt-card">
@@ -1027,8 +1155,11 @@ function createInitialFormState(log?: PlayLog): LogFormState {
     date: log?.date ?? getTodayDateValue(),
     hallName: log?.hallName ?? '',
     machineId: log?.machineId ?? '',
+    machineUnitMemo: log?.machineUnitMemo ?? '',
     investment: log ? String(log.investment) : '',
     payout: log ? String(log.payout) : '',
+    ballRateYen: log?.ballRateYen === undefined ? '' : String(log.ballRateYen),
+    reinvestedPayoutBalls: log?.reinvestedPayoutBalls === undefined ? '' : String(log.reinvestedPayoutBalls),
     startTime: log?.startTime ?? '',
     endTime: log?.endTime ?? '',
     exchangeRate: log?.exchangeRate === undefined ? '' : String(log.exchangeRate),
@@ -1046,6 +1177,9 @@ function validateLogForm(formState: LogFormState): { errors: LogFormErrors; inpu
   const errors: LogFormErrors = {};
   const investment = parseNumberField(formState.investment);
   const payout = parseNumberField(formState.payout);
+  const ballRateYen = formState.ballRateYen.trim() === '' ? undefined : parseNumberField(formState.ballRateYen);
+  const reinvestedPayoutBalls =
+    formState.reinvestedPayoutBalls.trim() === '' ? undefined : parseIntegerField(formState.reinvestedPayoutBalls);
   const exchangeRate = formState.exchangeRate.trim() === '' ? undefined : parseNumberField(formState.exchangeRate);
   const rotationMemos = normalizeRotationMemos(formState.rotationMemos, errors);
 
@@ -1069,6 +1203,14 @@ function validateLogForm(formState: LogFormState): { errors: LogFormErrors; inpu
     errors.payout = '0以上の数値を入力してください。';
   }
 
+  if (formState.ballRateYen.trim() !== '' && ballRateYen === undefined) {
+    errors.ballRateYen = '0以上の数値を入力してください。';
+  }
+
+  if (formState.reinvestedPayoutBalls.trim() !== '' && reinvestedPayoutBalls === undefined) {
+    errors.reinvestedPayoutBalls = '0以上の整数を入力してください。';
+  }
+
   if (formState.exchangeRate.trim() !== '' && exchangeRate === undefined) {
     errors.exchangeRate = '0以上の数値を入力してください。';
   }
@@ -1088,8 +1230,11 @@ function validateLogForm(formState: LogFormState): { errors: LogFormErrors; inpu
       date: formState.date,
       hallName: formState.hallName.trim(),
       machineId: formState.machineId,
+      machineUnitMemo: emptyToUndefined(formState.machineUnitMemo.trim()),
       investment,
       payout,
+      ballRateYen,
+      reinvestedPayoutBalls,
       startTime: emptyToUndefined(formState.startTime),
       endTime: emptyToUndefined(formState.endTime),
       exchangeRate,
@@ -1147,6 +1292,19 @@ function parseCurrencyInput(value: string) {
   return parseNumberField(value) ?? 0;
 }
 
+function createRotationRatePreview(formState: LogFormState): RotationRatePreview {
+  const investment = parseCurrencyInput(formState.investment);
+  const ballRateYen = parseNumberField(formState.ballRateYen);
+  const reinvestedPayoutBalls = parseIntegerField(formState.reinvestedPayoutBalls);
+  const adjustedInvestment = calculateAdjustedInvestment(investment, ballRateYen, reinvestedPayoutBalls);
+  const totalSpins = formState.rotationMemos.reduce((sum, memo) => sum + (parseIntegerField(memo.spins) ?? 0), 0);
+
+  return {
+    adjustedInvestment,
+    ratePerThousandYen: calculateRotationRatePerThousandYen(totalSpins, adjustedInvestment),
+  };
+}
+
 function emptyToUndefined(value: string) {
   return value === '' ? undefined : value;
 }
@@ -1157,6 +1315,14 @@ function getTodayDateValue() {
 
 function formatCurrency(value: number) {
   return currencyFormatter.format(value);
+}
+
+function formatRotationRate(value: number | undefined) {
+  return value === undefined ? '--回/1k' : `${rotationRateFormatter.format(roundToSingleDecimal(value))}回/1k`;
+}
+
+function roundToSingleDecimal(value: number) {
+  return Math.round(value * 10) / 10;
 }
 
 function formatRotationMemoExcerpt(rotationMemos: RotationMemo[] | undefined) {

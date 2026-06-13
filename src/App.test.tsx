@@ -99,6 +99,22 @@ describe('log form', () => {
     expect(screen.getByLabelText('収支プレビュー')).toHaveTextContent('￥5,000');
   });
 
+  it('updates the rotation rate preview while editing the log form', async () => {
+    const user = userEvent.setup();
+    renderApp('/logs/new');
+
+    expect(screen.getByLabelText('平均回転プレビュー')).toHaveTextContent('--回/1k');
+
+    await user.type(screen.getByLabelText('投資'), '28000');
+    await user.type(screen.getByLabelText('貸玉レート'), '4');
+    await user.type(screen.getByLabelText('通常回転へ使った出玉'), '2500');
+    await user.type(screen.getByLabelText('回転数'), '676');
+
+    expect(screen.getByLabelText('平均回転プレビュー')).toHaveTextContent('17.8回/1k');
+    expect(screen.getByLabelText('平均回転プレビュー')).toHaveTextContent('補正投資 ￥38,000');
+    expect(screen.getByLabelText('収支プレビュー')).toHaveTextContent('-￥28,000');
+  });
+
   it('saves a valid log and shows it in the log list', async () => {
     const user = userEvent.setup();
     renderApp('/logs/new');
@@ -129,8 +145,11 @@ describe('log form', () => {
     const machineSelect = await screen.findByLabelText('機種');
     await within(machineSelect).findByRole('option', { name: 'スマートパチンコ A' });
     await user.selectOptions(machineSelect, 'machine-smart-pachinko-a');
+    await user.type(screen.getByLabelText('台番号/台識別'), '328番台');
     await user.type(screen.getByLabelText('投資'), '10000');
     await user.type(screen.getByLabelText('回収'), '15500');
+    await user.type(screen.getByLabelText('貸玉レート'), '4');
+    await user.type(screen.getByLabelText('通常回転へ使った出玉'), '2500');
     await user.type(screen.getByLabelText('投資額'), '10000');
     await user.type(screen.getByLabelText('回転数'), '162');
     await user.type(screen.getByLabelText('メモ', { selector: '#rotation-note-0' }), '最初は良好');
@@ -142,6 +161,11 @@ describe('log form', () => {
 
     const savedLogs = await db.playLogs.toArray();
     expect(savedLogs[0]?.rotationMemos).toEqual([{ investment: 10000, spins: 162, note: '最初は良好' }]);
+    expect(savedLogs[0]).toMatchObject({
+      machineUnitMemo: '328番台',
+      ballRateYen: 4,
+      reinvestedPayoutBalls: 2500,
+    });
   });
 
   it('does not save an empty rotation memo row', async () => {
@@ -170,8 +194,11 @@ describe('log form', () => {
       date: '2026-06-11',
       hallName: '駅前ホール',
       machineId: 'machine-smart-pachinko-a',
+      machineUnitMemo: '328番台',
       investment: 12000,
       payout: 18000,
+      ballRateYen: 4,
+      reinvestedPayoutBalls: 2500,
       rotationMemos: [{ investment: 10000, spins: 162, note: '最初は良好' }],
       createdAt: '2026-06-11T00:00:00.000Z',
       updatedAt: '2026-06-11T00:00:00.000Z',
@@ -179,9 +206,39 @@ describe('log form', () => {
 
     renderApp(`/logs/${id}/edit`);
 
+    expect(await screen.findByDisplayValue('328番台')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('4')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('2500')).toBeInTheDocument();
     expect(await screen.findByDisplayValue('10000')).toBeInTheDocument();
     expect(screen.getByDisplayValue('162')).toBeInTheDocument();
     expect(screen.getByDisplayValue('最初は良好')).toBeInTheDocument();
+  });
+
+  it('shows adjusted rotation metrics and machine unit ranking on analytics', async () => {
+    await db.playLogs.add({
+      id: 'log-with-adjusted-rotation',
+      date: '2026-06-11',
+      hallName: 'マルハン新宿東宝',
+      machineId: 'machine-smart-pachinko-a',
+      machineUnitMemo: '328番台',
+      investment: 28000,
+      payout: 60000,
+      ballRateYen: 4,
+      reinvestedPayoutBalls: 2500,
+      rotationMemos: [{ investment: 28000, spins: 676 }],
+      createdAt: '2026-06-11T00:00:00.000Z',
+      updatedAt: '2026-06-11T00:00:00.000Z',
+    });
+
+    renderApp('/analytics');
+
+    expect((await screen.findAllByText('17.8回/1k')).length).toBeGreaterThan(0);
+    expect(screen.getByText('平均回転')).toBeInTheDocument();
+    expect(screen.getByText('補正投資')).toBeInTheDocument();
+    expect(screen.getByText('￥38,000')).toBeInTheDocument();
+    expect(screen.getByText('台別回転')).toBeInTheDocument();
+    expect(screen.getByText('1. スマートパチンコ A / 328番台')).toBeInTheDocument();
+    expect(screen.getByText('マルハン新宿東宝 / 補正あり / 1戦')).toBeInTheDocument();
   });
 
   it('shows a DMM detail link only in the selected machine preview', async () => {

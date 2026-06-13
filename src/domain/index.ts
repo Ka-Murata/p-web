@@ -8,6 +8,13 @@ export type {
   RotationMemo,
   UpdatePlayLogInput,
 } from './types';
+export type { MachineUnitRotationBucket, RotationRateSummary } from './rotation';
+export {
+  calculateAdjustedInvestment,
+  calculateRotationRatePerThousandYen,
+  groupLogsByMachineUnit,
+  summarizeRotationRate,
+} from './rotation';
 export {
   calculateAverageProfit,
   calculateProfit,

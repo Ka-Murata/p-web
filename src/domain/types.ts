@@ -11,8 +11,11 @@ export type PlayLog = {
   date: string;
   hallName: string;
   machineId: string;
+  machineUnitMemo?: string;
   investment: number;
   payout: number;
+  ballRateYen?: number;
+  reinvestedPayoutBalls?: number;
   startTime?: string;
   endTime?: string;
   exchangeRate?: number;
