@@ -276,6 +276,20 @@ describe('log form', () => {
     expect(within(machineSelect).getByRole('option', { name: 'e 東京喰種' })).toBeInTheDocument();
     expect(within(machineSelect).queryByText(/p-town\.dmm\.com/)).not.toBeInTheDocument();
   });
+
+  it('shows the added キン肉マン machine in the machine list and log select', async () => {
+    const user = userEvent.setup();
+    renderApp('/machines');
+
+    await user.click(await screen.findByRole('button', { name: /キン肉マンシリーズ/ }));
+    expect(screen.getByText('京楽')).toBeInTheDocument();
+
+    cleanup();
+    await db.machines.clear();
+    renderApp('/logs/new');
+    const machineSelect = await screen.findByLabelText('機種');
+    expect(await within(machineSelect).findByRole('option', { name: 'キン肉マンシリーズ' })).toBeInTheDocument();
+  });
 });
 
 function renderApp(initialPath: string) {

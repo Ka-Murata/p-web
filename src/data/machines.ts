@@ -46,4 +46,11 @@ export const seedMachines: Machine[] = [
     category: 'pachinko',
     memo: 'バトル系シリーズ',
   },
+  {
+    id: 'machine-kinnikuman-series',
+    name: 'キン肉マンシリーズ',
+    maker: '京楽',
+    category: 'pachinko',
+    memo: 'プロレス系バトルシリーズ',
+  },
 ];
