@@ -47,10 +47,11 @@ export const seedMachines: Machine[] = [
     memo: 'バトル系シリーズ',
   },
   {
-    id: 'machine-kinnikuman-series',
-    name: 'キン肉マンシリーズ',
-    maker: '京楽',
+    id: 'dmm-pachinko-4958',
+    name: 'eフィーバーキン肉マン',
+    maker: 'SANKYO',
     category: 'pachinko',
-    memo: 'プロレス系バトルシリーズ',
+    dmmUrl: 'https://p-town.dmm.com/machines/4958',
+    memo: 'DMMぱちタウン参照',
   },
 ];

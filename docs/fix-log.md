@@ -15,6 +15,15 @@
 - 関連: ...
 ``` 
 
+## 2026-06-13 - キン肉マン機種 seed を DMM 詳細 URL 4958 の実機データへ修正し quality gate を再確認
+
+- 種別: 不具合 / CI 調査
+- 症状: キン肉マン機種の追加依頼に対して仮のシリーズ名データを入れており、ユーザー指定の DMM 詳細 URL `https://p-town.dmm.com/machines/4958` と一致していなかった。あわせて「quality gate が通らない」と報告があった。
+- 原因: 機種追加時に DMM URL ベースの実機 seed ではなく仮の手入力 seed を追加していた。加えて、`src/App.test.tsx` の分析画面テストが機種 seed 同期完了前に `getByText` で台別回転ラベルを取得しており、実行順によっては quality gate で失敗する非同期待ち漏れがあった。
+- 対応: `src/data/machines.ts` のキン肉マン seed を `eフィーバーキン肉マン / SANKYO / dmm-pachinko-4958 / https://p-town.dmm.com/machines/4958` に修正した。repository テストと画面テストも更新し、機種一覧プレビューとログ入力の機種選択に表示されること、DMM 詳細リンクが正しいことを確認するテストを追加した。あわせて分析画面テストの台別回転関連アサーションを `findByText` に変更し、seed 同期完了を待つようにした。
+- 確認: `npm audit --audit-level=high` 成功、`npm run check:public-safety` 成功、`npm test` 成功（5 files / 33 tests）、`npm run build` 成功。
+- 関連: `src/data/machines.ts`, `src/App.test.tsx`, `src/lib/db/repository.test.ts`, `docs/fix-log.md`
+
 ## 2026-06-13 - npm audit で Vite 経由の esbuild high 脆弱性が検出される
 
 - 種別: CI/CD / セキュリティ

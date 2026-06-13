@@ -237,8 +237,8 @@ describe('log form', () => {
     expect(screen.getByText('補正投資')).toBeInTheDocument();
     expect(screen.getByText('￥38,000')).toBeInTheDocument();
     expect(screen.getByText('台別回転')).toBeInTheDocument();
-    expect(screen.getByText((content) => content.includes('1. スマートパチンコ A / 328番台'))).toBeInTheDocument();
-    expect(screen.getByText('マルハン新宿東宝 / 補正あり / 1戦')).toBeInTheDocument();
+    expect(await screen.findByText((content) => content.includes('1. スマートパチンコ A / 328番台'))).toBeInTheDocument();
+    expect(await screen.findByText('マルハン新宿東宝 / 補正あり / 1戦')).toBeInTheDocument();
   });
 
   it('shows a DMM detail link only in the selected machine preview', async () => {
@@ -263,6 +263,12 @@ describe('log form', () => {
       'https://p-town.dmm.com/machines/4782',
     );
 
+    await user.click(screen.getByRole('button', { name: /eフィーバーキン肉マン/ }));
+    expect(screen.getByRole('link', { name: 'DMMで詳細を見る' })).toHaveAttribute(
+      'href',
+      'https://p-town.dmm.com/machines/4958',
+    );
+
     await user.click(screen.getByRole('button', { name: /スマートパチンコ A/ }));
     expect(screen.queryByRole('link', { name: 'DMMで詳細を見る' })).not.toBeInTheDocument();
   });
@@ -281,14 +287,14 @@ describe('log form', () => {
     const user = userEvent.setup();
     renderApp('/machines');
 
-    await user.click(await screen.findByRole('button', { name: /キン肉マンシリーズ/ }));
-    expect(screen.getByText('京楽')).toBeInTheDocument();
+    await user.click(await screen.findByRole('button', { name: /eフィーバーキン肉マン/ }));
+    expect(screen.getByText('SANKYO')).toBeInTheDocument();
 
     cleanup();
     await db.machines.clear();
     renderApp('/logs/new');
     const machineSelect = await screen.findByLabelText('機種');
-    expect(await within(machineSelect).findByRole('option', { name: 'キン肉マンシリーズ' })).toBeInTheDocument();
+    expect(await within(machineSelect).findByRole('option', { name: 'eフィーバーキン肉マン' })).toBeInTheDocument();
   });
 });
 

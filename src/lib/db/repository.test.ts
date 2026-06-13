@@ -97,6 +97,11 @@ describe('machineRepository', () => {
       maker: 'ビスティ',
       dmmUrl: 'https://p-town.dmm.com/machines/4782',
     });
+    expect(machines.find((machine) => machine.id === 'dmm-pachinko-4958')).toMatchObject({
+      name: 'eフィーバーキン肉マン',
+      maker: 'SANKYO',
+      dmmUrl: 'https://p-town.dmm.com/machines/4958',
+    });
   });
 
   it('keeps machines without DMM URLs readable', async () => {
