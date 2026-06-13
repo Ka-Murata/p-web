@@ -26,6 +26,14 @@ describe('log form', () => {
     expect(screen.getByText('GitHub Pages 公開中')).toBeInTheDocument();
   });
 
+  it('uses the dark base theme shell on the logs page', async () => {
+    const { container } = renderApp('/logs');
+
+    expect(await screen.findByRole('heading', { name: '最近の実戦' })).toBeInTheDocument();
+    expect(container.querySelector('.bg-pwt-background')).toBeInTheDocument();
+    expect(container.querySelector('.text-pwt-text')).toBeInTheDocument();
+  });
+
   it('returns from the new log form to the log list without a confirmation dialog', async () => {
     const confirmSpy = vi.spyOn(window, 'confirm').mockReturnValue(false);
     const user = userEvent.setup();

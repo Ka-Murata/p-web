@@ -12,6 +12,21 @@ const compactCurrencyFormatter = new Intl.NumberFormat('ja-JP', {
   maximumFractionDigits: 1,
 });
 
+const chartGridColor = '#31453d';
+const chartTickColor = '#9aaba2';
+const chartPositiveColor = '#22c77a';
+const chartNegativeColor = '#ff6b6b';
+const chartTooltipStyle = {
+  backgroundColor: '#121815',
+  border: '1px solid #263832',
+  borderRadius: 8,
+  color: '#f4fff8',
+};
+const chartTooltipLabelStyle = {
+  color: '#9aaba2',
+  fontWeight: 700,
+};
+
 export function MonthlyProfitChart({ buckets }: { buckets: SummaryBucket[] }) {
   if (buckets.length === 0) {
     return (
@@ -30,13 +45,19 @@ export function MonthlyProfitChart({ buckets }: { buckets: SummaryBucket[] }) {
     <div className="mt-4 h-64 w-full">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={chartData} margin={{ top: 8, right: 4, bottom: 0, left: -18 }}>
-          <CartesianGrid stroke="#dcebe0" strokeDasharray="3 3" vertical={false} />
-          <XAxis dataKey="name" tick={{ fill: '#5d6d64', fontSize: 11 }} tickLine={false} axisLine={false} interval="preserveStartEnd" />
-          <YAxis tick={{ fill: '#5d6d64', fontSize: 11 }} tickLine={false} axisLine={false} tickFormatter={formatCompactCurrency} />
-          <Tooltip formatter={(value) => formatCurrency(Number(value))} labelFormatter={(label) => `${label}月`} />
+          <CartesianGrid stroke={chartGridColor} strokeDasharray="3 3" vertical={false} />
+          <XAxis dataKey="name" tick={{ fill: chartTickColor, fontSize: 11 }} tickLine={false} axisLine={false} interval="preserveStartEnd" />
+          <YAxis tick={{ fill: chartTickColor, fontSize: 11 }} tickLine={false} axisLine={false} tickFormatter={formatCompactCurrency} />
+          <Tooltip
+            contentStyle={chartTooltipStyle}
+            labelStyle={chartTooltipLabelStyle}
+            cursor={{ fill: '#1b262180' }}
+            formatter={(value) => formatCurrency(Number(value))}
+            labelFormatter={(label) => `${label}月`}
+          />
           <Bar dataKey="profit" radius={[6, 6, 0, 0]}>
             {chartData.map((item) => (
-              <Cell key={item.name} fill={item.profit >= 0 ? '#14532d' : '#b91c1c'} />
+              <Cell key={item.name} fill={item.profit >= 0 ? chartPositiveColor : chartNegativeColor} />
             ))}
           </Bar>
         </BarChart>

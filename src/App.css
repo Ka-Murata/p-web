@@ -1,16 +1,21 @@
 @import "tailwindcss";
 
 @theme {
-  --color-pwt-background: #f4f7f2;
-  --color-pwt-surface: #ffffff;
-  --color-pwt-surface-muted: #edf2ea;
-  --color-pwt-text: #18221d;
-  --color-pwt-muted: #5d6d64;
-  --color-pwt-primary: #14532d;
-  --color-pwt-primary-soft: #dcebe0;
+  --color-pwt-background: #050806;
+  --color-pwt-surface: #121815;
+  --color-pwt-surface-muted: #1b2621;
+  --color-pwt-text: #f4fff8;
+  --color-pwt-muted: #9aaba2;
+  --color-pwt-primary: #22c77a;
+  --color-pwt-primary-soft: #123b35;
   --color-pwt-accent: #f3c33b;
-  --color-pwt-accent-soft: #fff4c7;
-  --shadow-pwt-card: 0 16px 40px rgb(20 83 45 / 0.1);
+  --color-pwt-accent-soft: #33270e;
+  --color-pwt-danger: #ff6b6b;
+  --color-pwt-danger-soft: #351516;
+  --color-pwt-warning: #ffe7a3;
+  --color-pwt-warning-soft: #33270e;
+  --color-pwt-border: #263832;
+  --shadow-pwt-card: 0 16px 40px rgb(0 0 0 / 0.28);
 }
 
 @layer base {
@@ -64,5 +69,6 @@
   input[type="date"]::-webkit-calendar-picker-indicator,
   input[type="time"]::-webkit-calendar-picker-indicator {
     margin-left: 0;
+    filter: invert(1) brightness(1.4);
   }
 }

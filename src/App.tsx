@@ -37,6 +37,7 @@ import {
   type SummaryBucket,
 } from '@/domain';
 import { useCreatePlayLog, useDeletePlayLog, useMachines, usePlayLog, usePlayLogs, useUpdatePlayLog } from '@/hooks';
+import pwtLogo from '@/img/p-web-logo.png';
 import './App.css';
 
 type TabItem = {
@@ -103,11 +104,14 @@ function AppShell() {
   return (
     <div className="min-h-svh bg-pwt-background text-pwt-text">
       <div className="mx-auto flex min-h-svh w-full max-w-md flex-col sm:max-w-xl">
-        <header className="px-4 pb-3 pt-5">
-          <p className="text-sm font-bold text-pwt-muted">Pachinko Wallet Tracker</p>
-          <h1 className="mt-1 text-2xl font-extrabold leading-tight tracking-normal text-pwt-primary">
-            パチンコ収支管理
-          </h1>
+        <header className="flex items-center gap-3 px-4 pb-3 pt-5">
+          <img src={pwtLogo} alt="" className="size-12 shrink-0" aria-hidden="true" />
+          <div className="min-w-0">
+            <p className="truncate text-sm font-bold text-pwt-muted">Pachinko Wallet Tracker</p>
+            <h1 className="mt-1 text-2xl font-extrabold leading-tight tracking-normal text-pwt-primary">
+              パチンコ収支管理
+            </h1>
+          </div>
         </header>
 
         <div className={showsTabNav ? 'flex-1 px-4 pb-28' : 'flex-1 px-4 pb-6'}>
@@ -130,7 +134,7 @@ function AppShell() {
 function BottomTabNav() {
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-10 border-t border-pwt-primary-soft bg-pwt-surface/95 px-4 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pt-3 shadow-[0_-12px_32px_rgb(20_83_45_/_0.08)] backdrop-blur"
+      className="fixed inset-x-0 bottom-0 z-10 border-t border-pwt-border bg-pwt-surface/95 px-4 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pt-3 shadow-[0_-12px_32px_rgb(0_0_0_/_0.32)] backdrop-blur"
       aria-label="主要画面"
     >
       <div className="mx-auto grid max-w-md grid-cols-3 gap-2 sm:max-w-xl">
@@ -145,7 +149,7 @@ function BottomTabNav() {
                 [
                   'flex min-h-12 items-center justify-center gap-1.5 rounded-[8px] px-3 text-sm font-bold transition focus:outline-none focus:ring-4 focus:ring-pwt-primary-soft',
                   isActive
-                    ? 'bg-pwt-primary text-white shadow-sm'
+                    ? 'bg-pwt-primary text-pwt-background shadow-sm'
                     : 'bg-pwt-surface-muted text-pwt-muted hover:bg-pwt-primary-soft hover:text-pwt-primary',
                 ].join(' ')
               }
@@ -193,9 +197,9 @@ function LogsPage() {
         </div>
       </section>
 
-      <section className="rounded-[8px] border border-amber-200 bg-amber-50 p-4 text-amber-950" aria-labelledby="publish-safety-title">
+      <section className="rounded-[8px] border border-pwt-accent/45 bg-pwt-warning-soft p-4 text-pwt-warning" aria-labelledby="publish-safety-title">
         <div className="flex items-start gap-3">
-          <CheckCircle2 aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-pwt-primary" />
+          <CheckCircle2 aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-pwt-accent" />
           <div className="min-w-0">
             <h2 id="publish-safety-title" className="text-sm font-extrabold tracking-normal">
               GitHub Pages 公開中
@@ -249,7 +253,7 @@ function LogsPage() {
                     ) : null}
                   </div>
                   <div className="flex shrink-0 flex-col items-end gap-2">
-                    <p className={profit >= 0 ? 'text-base font-extrabold text-pwt-primary' : 'text-base font-extrabold text-red-700'}>
+                    <p className={profit >= 0 ? 'text-base font-extrabold text-pwt-primary' : 'text-base font-extrabold text-pwt-danger'}>
                       {formatCurrency(profit)}
                     </p>
                     <Button asChild variant="ghost" size="sm">
@@ -413,7 +417,7 @@ function MachinesPage() {
 function MachinePreview({ machine }: { machine: Machine | undefined }) {
   if (!machine) {
     return (
-      <section className="rounded-[8px] border border-dashed border-pwt-primary-soft bg-pwt-surface p-5" aria-label="機種詳細">
+      <section className="rounded-[8px] border border-dashed border-pwt-border bg-pwt-surface p-5" aria-label="機種詳細">
         <p className="text-sm font-bold text-pwt-muted">Preview</p>
         <h3 className="mt-2 text-xl font-extrabold tracking-normal text-pwt-text">機種を選択</h3>
         <p className="mt-2 break-words text-sm leading-6 text-pwt-muted">一覧から機種を選ぶと、メーカー、カテゴリ、メモをここで確認できます。</p>
@@ -422,16 +426,16 @@ function MachinePreview({ machine }: { machine: Machine | undefined }) {
   }
 
   return (
-    <section className="rounded-[8px] bg-pwt-primary p-5 text-white shadow-pwt-card" aria-label="機種詳細">
-      <p className="text-sm font-bold text-white/75">Selected Machine</p>
+    <section className="rounded-[8px] border border-pwt-border bg-pwt-primary-soft p-5 text-pwt-text shadow-pwt-card" aria-label="機種詳細">
+      <p className="text-sm font-bold text-pwt-muted">Selected Machine</p>
       <h3 className="mt-2 break-words text-2xl font-extrabold tracking-normal">{machine.name}</h3>
       <div className="mt-4 grid grid-cols-2 gap-3">
         <DetailPill label="メーカー" value={machine.maker} />
         <DetailPill label="カテゴリ" value={getMachineCategoryLabel(machine.category)} />
       </div>
-      {machine.memo ? <p className="mt-4 break-words text-sm leading-6 text-white/80">{machine.memo}</p> : null}
+      {machine.memo ? <p className="mt-4 break-words text-sm leading-6 text-pwt-muted">{machine.memo}</p> : null}
       {machine.dmmUrl ? (
-        <Button asChild variant="accent" size="sm" className="mt-4 w-full text-pwt-primary sm:w-auto">
+        <Button asChild variant="accent" size="sm" className="mt-4 w-full sm:w-auto">
           <a href={machine.dmmUrl} target="_blank" rel="noreferrer">
             <ExternalLink aria-hidden="true" />
             DMMで詳細を見る
@@ -456,25 +460,25 @@ function MachineListItem({
       type="button"
       className={[
         'w-full rounded-[8px] p-4 text-left shadow-pwt-card transition focus:outline-none focus:ring-4 focus:ring-pwt-primary-soft',
-        isSelected ? 'bg-pwt-primary text-white' : 'bg-pwt-surface text-pwt-text hover:bg-pwt-primary-soft',
+        isSelected ? 'bg-pwt-primary-soft text-pwt-text' : 'bg-pwt-surface text-pwt-text hover:bg-pwt-primary-soft',
       ].join(' ')}
       onClick={onSelect}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className={isSelected ? 'truncate text-base font-extrabold text-white' : 'truncate text-base font-extrabold text-pwt-text'}>
+          <p className={isSelected ? 'truncate text-base font-extrabold text-pwt-text' : 'truncate text-base font-extrabold text-pwt-text'}>
             {machine.name}
           </p>
-          <p className={isSelected ? 'mt-1 text-sm font-bold text-white/75' : 'mt-1 text-sm font-bold text-pwt-muted'}>
+          <p className={isSelected ? 'mt-1 text-sm font-bold text-pwt-muted' : 'mt-1 text-sm font-bold text-pwt-muted'}>
             {machine.maker} / {getMachineCategoryLabel(machine.category)}
           </p>
         </div>
-        <span className={isSelected ? 'rounded-[8px] bg-white/15 px-3 py-1 text-xs font-bold text-white' : 'rounded-[8px] bg-pwt-surface-muted px-3 py-1 text-xs font-bold text-pwt-muted'}>
+        <span className={isSelected ? 'rounded-[8px] bg-pwt-surface-muted px-3 py-1 text-xs font-bold text-pwt-primary' : 'rounded-[8px] bg-pwt-surface-muted px-3 py-1 text-xs font-bold text-pwt-muted'}>
           詳細
         </span>
       </div>
       {machine.memo ? (
-        <p className={isSelected ? 'mt-3 line-clamp-2 text-sm leading-6 text-white/80' : 'mt-3 line-clamp-2 text-sm leading-6 text-pwt-muted'}>
+        <p className={isSelected ? 'mt-3 line-clamp-2 text-sm leading-6 text-pwt-muted' : 'mt-3 line-clamp-2 text-sm leading-6 text-pwt-muted'}>
           {machine.memo}
         </p>
       ) : null}
@@ -484,9 +488,9 @@ function MachineListItem({
 
 function DetailPill({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-[8px] bg-white/15 px-3 py-2">
-      <p className="text-xs font-bold text-white/70">{label}</p>
-      <p className="mt-1 truncate text-sm font-extrabold text-white">{value}</p>
+    <div className="rounded-[8px] bg-pwt-surface-muted px-3 py-2">
+      <p className="text-xs font-bold text-pwt-muted">{label}</p>
+      <p className="mt-1 truncate text-sm font-extrabold text-pwt-text">{value}</p>
     </div>
   );
 }
@@ -544,7 +548,7 @@ function EditLogPage() {
         submitLabel="更新"
         isSubmitting={updatePlayLog.isPending}
         footer={
-          <Button type="button" variant="outline" className="w-full text-red-700 hover:bg-red-50" onClick={() => setIsDeleteDialogOpen(true)}>
+          <Button type="button" variant="outline" className="w-full text-pwt-danger hover:bg-pwt-danger-soft" onClick={() => setIsDeleteDialogOpen(true)}>
             <Trash2 aria-hidden="true" />
             削除
           </Button>
@@ -561,7 +565,7 @@ function EditLogPage() {
           </Button>
           <Button
             type="button"
-            className="bg-red-700 hover:bg-red-800"
+            className="bg-pwt-danger text-pwt-background hover:bg-pwt-danger/85"
             onClick={async () => {
               await deletePlayLog.mutateAsync(id);
               navigate('/logs');
@@ -814,13 +818,18 @@ function Field({
         {label}
       </label>
       {children}
-      {error ? <p className="text-xs font-bold text-red-700">{error}</p> : null}
+      {error ? <p className="text-xs font-bold text-pwt-danger">{error}</p> : null}
     </div>
   );
 }
 
 function ProfitPreview({ profit }: { profit: number }) {
-  const tone = profit > 0 ? 'bg-pwt-primary text-white' : profit < 0 ? 'bg-red-50 text-red-700' : 'bg-pwt-surface-muted text-pwt-muted';
+  const tone =
+    profit > 0
+      ? 'bg-pwt-primary-soft text-pwt-primary'
+      : profit < 0
+        ? 'bg-pwt-danger-soft text-pwt-danger'
+        : 'bg-pwt-surface-muted text-pwt-muted';
 
   return (
     <section className={`rounded-[8px] px-4 py-3 ${tone}`} aria-label="収支プレビュー">
@@ -844,7 +853,7 @@ function RotationMemoFields({
   onChange: (index: number, field: keyof RotationMemoFormState, value: string) => void;
 }) {
   return (
-    <section className="space-y-3 rounded-[8px] border border-pwt-primary-soft bg-pwt-surface-muted p-3" aria-labelledby="rotation-memos-title">
+    <section className="space-y-3 rounded-[8px] border border-pwt-border bg-pwt-surface-muted p-3" aria-labelledby="rotation-memos-title">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h3 id="rotation-memos-title" className="text-sm font-extrabold tracking-normal text-pwt-text">
@@ -979,7 +988,7 @@ function RankingList({ title, items }: { title: string; items: SummaryBucket[] }
               <p className="break-words font-bold text-pwt-text">{index + 1}. {item.label}</p>
               <p className="text-xs font-bold text-pwt-muted">{item.playCount}戦 / 勝率 {Math.round(item.winRate * 100)}%</p>
             </div>
-            <p className={item.totalProfit >= 0 ? 'shrink-0 font-extrabold text-pwt-primary' : 'shrink-0 font-extrabold text-red-700'}>
+            <p className={item.totalProfit >= 0 ? 'shrink-0 font-extrabold text-pwt-primary' : 'shrink-0 font-extrabold text-pwt-danger'}>
               {formatCurrency(item.totalProfit)}
             </p>
           </div>
@@ -1001,7 +1010,7 @@ function MetricCard({ label, value }: { label: string; value: string }) {
 function StatusCard({ text, tone = 'neutral' }: { text: string; tone?: 'neutral' | 'danger' }) {
   const className =
     tone === 'danger'
-      ? 'rounded-[8px] bg-red-50 px-4 py-3 text-sm font-bold text-red-700'
+      ? 'rounded-[8px] bg-pwt-danger-soft px-4 py-3 text-sm font-bold text-pwt-danger'
       : 'rounded-[8px] bg-pwt-surface-muted px-4 py-3 text-sm font-bold text-pwt-muted';
 
   return <div className={className}>{text}</div>;
