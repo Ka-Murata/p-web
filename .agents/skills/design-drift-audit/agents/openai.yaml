@@ -1,0 +1,4 @@
+interface:
+  display_name: "Design Drift Audit"
+  short_description: "Audit layout.pen versus implemented UI."
+  default_prompt: "Use $design-drift-audit to audit drift between layout.pen and the implemented UI."

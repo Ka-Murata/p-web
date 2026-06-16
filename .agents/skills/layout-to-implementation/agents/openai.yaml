@@ -1,0 +1,4 @@
+interface:
+  display_name: "Layout to Implementation"
+  short_description: "Implement approved layout-backed tasks."
+  default_prompt: "Use $layout-to-implementation to implement an approved layout-backed backlog task."

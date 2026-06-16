@@ -1,0 +1,4 @@
+interface:
+  display_name: "Repair Flow"
+  short_description: "Orchestrate fix-log to audited repair."
+  default_prompt: "Use $repair-flow to guide a bug or repair request from fix-log through layout, backlog, implementation, and audit."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Feature Flow"
+  short_description: "Orchestrate ADR to audited implementation."
+  default_prompt: "Use $feature-flow to guide a new feature from ADR through layout, backlog, implementation, and audit."

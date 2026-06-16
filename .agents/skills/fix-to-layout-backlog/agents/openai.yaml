@@ -1,0 +1,4 @@
+interface:
+  display_name: "Fix to Layout Backlog"
+  short_description: "Convert UI fixes into layout-backed tasks."
+  default_prompt: "Use $fix-to-layout-backlog to convert a UI-impacting fix-log item into approved layout and backlog tasks."
